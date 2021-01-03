@@ -2,6 +2,13 @@
 
 import { lineBreakG } from "./whitespace";
 
+export type SourceMapPosition = {
+  line: number;
+  column: number;
+  source?: ?string;
+  name?: ?string;
+};
+
 export type Pos = {
   start: number,
 };
