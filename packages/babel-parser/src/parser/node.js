@@ -12,11 +12,12 @@ class Node implements NodeBase {
     this.type = "";
     this.start = pos;
     this.end = 0;
-    if(parser.options.inputSourceMap){
-      let {line, column, name, source} = parser.options.inputSourceMap.originalPositionFor(loc);
-      this.loc = new SourceLocation(new Position(line, column));
-      this.loc.filename = source;
-      this.loc.identifierName = name;
+
+    if(parser?.options.remapOriginalPosition){
+      let originalMapping = parser.options.remapOriginalPosition(loc);
+      this.loc = new SourceLocation(new Position(originalMapping.line, originalMapping.column));
+      if(originalMapping.source) this.loc.filename = originalMapping.source;
+      this.loc.identifierName = originalMapping.name;
     } else {
       this.loc = new SourceLocation(loc);
       if (parser?.filename) this.loc.filename = parser.filename;
@@ -98,9 +99,9 @@ export class NodeUtils extends UtilParser {
     }
     node.type = type;
     node.end = pos;
-    if(this.options.inputSourceMap){
-      let {line, column} = this.options.inputSourceMap.originalPositionFor(loc);
-      node.loc.end = new Position(line, column);
+    if(this.options.remapOriginalPosition){
+      let originalMapping = this.options.remapOriginalPosition(loc);
+      node.loc.end = new Position(originalMapping.line, originalMapping.column);
     } else {
       node.loc.end = loc;
     }
@@ -121,9 +122,9 @@ export class NodeUtils extends UtilParser {
     endLoc?: Position = this.state.lastTokEndLoc,
   ): void {
     node.end = end;
-    if(this.options.inputSourceMap){
-      let {line, column} = this.options.inputSourceMap.originalPositionFor(endLoc);
-      node.loc.end = new Position(line, column);
+    if(this.options.remapOriginalPosition){
+      let originalMapping = this.options.remapOriginalPosition(endLoc);
+      node.loc.end = new Position(originalMapping.line, originalMapping.column);
     } else {
       node.loc.end = endLoc;
     }

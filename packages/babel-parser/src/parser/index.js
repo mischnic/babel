@@ -25,7 +25,7 @@ export default class Parser extends StatementParser {
   */
 
   constructor(options: ?Options, input: string) {
-    options = getOptions(options, input);
+    options = getOptions(options);
     super(options, input);
 
     const ScopeHandler = this.getScopeHandler();
